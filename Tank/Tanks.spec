@@ -37,4 +37,4 @@ exe = EXE(pyz,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None , icon='/home/kerim/Documents/Git_files/kerim/Tank/icon.ico')
+          entitlements_file=None )
