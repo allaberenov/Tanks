@@ -1,33 +1,31 @@
 from random import randint
-
+from graph_elements import window, TILE, TANK_SIZE
 import pygame
 
 DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
-TILE = 32
-
-pygame.init()
-WIDTH, HEIGHT = 800, 500
-window = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
-class Factory:
+class Storage:
     objects = []
     bullets = []
 
 
-factory = Factory()
+storage = Storage()
 
 
-class Creator(Factory):
+class Factory:
     def create_objects(self):
         raise NotImplementedError("Функция не переопределена")
 
+    def update(self, *args):
+        raise NotImplementedError("Функция не переопределена")
 
-class Tank(Creator):
+
+class Tank(Factory):
     def __init__(self, color, px, py, direct, keylist):
-        Factory.objects.append(self)
+        Storage.objects.append(self)
         self.color = color
-        self.rect = pygame.Rect(px, py, TILE, TILE)
+        self.rect = pygame.Rect(px, py, TANK_SIZE, TANK_SIZE)
         self.direct = direct
         self.moveSpeed = 2
         self.hp = 1
@@ -45,20 +43,20 @@ class Tank(Creator):
 
     def update(self, keys):
         oldX, oldY = self.rect.topleft
-        if keys[self.keyLEFT] and self.rect.x > 0:
+        if keys[self.keyLEFT] and self.rect.x >= 0:
             self.rect.x -= self.moveSpeed
             self.direct = 3
-        elif keys[self.keyRIGHT] and self.rect.x < WIDTH - TILE:
+        elif keys[self.keyRIGHT] and self.rect.x <= window.get_width() - TILE:
             self.rect.x += self.moveSpeed
             self.direct = 1
-        elif keys[self.keyUP] and self.rect.y > 0:
+        elif keys[self.keyUP] and self.rect.y >= 0:
             self.rect.y -= self.moveSpeed
             self.direct = 0
-        elif keys[self.keyDOWN] and self.rect.y < HEIGHT - TILE:
+        elif keys[self.keyDOWN] and self.rect.y <= window.get_height() - TILE:
             self.rect.y += self.moveSpeed
             self.direct = 2
 
-        for obj in Factory.objects:
+        for obj in storage.objects:
             if obj != self and self.rect.colliderect(obj.rect):
                 self.rect.topleft = oldX, oldY
 
@@ -81,13 +79,13 @@ class Tank(Creator):
     def damage(self, value):
         self.hp -= value
         if self.hp <= 0:
-            Factory.objects.remove(self)
+            storage.objects.remove(self)
             print(self.color, 'dead')
 
 
-class Bullet(Creator):
+class Bullet(Factory):
     def __init__(self, parent, px, py, dx, dy, damage):
-        Factory.bullets.append(self)
+        storage.bullets.append(self)
         self.parent = parent
         self.px, self.py = px, py
         self.dx, self.dy = dx, dy
@@ -97,22 +95,23 @@ class Bullet(Creator):
         self.px += self.dx
         self.py += self.dy
 
-        if self.px < 0 or self.px > WIDTH - TILE or self.py < 0 or self.py > HEIGHT:
-            Factory.bullets.remove(self)
+        if self.px < 0 or self.px > window.get_width() or self.py < 0 or self.py > window.get_height():
+            storage.bullets.remove(self)
         else:
-            for obj in Factory.objects:
+            for obj in Storage.objects:
                 if obj != self.parent and obj.rect.collidepoint(self.px, self.py):
                     # obj.damage(self.damage)
-                    Factory.bullets.remove(self)
-                    Factory.objects.remove(obj)
+                    Storage.bullets.remove(self)
+                    Storage.objects.remove(obj)
                     break
 
     def create_objects(self):
         pygame.draw.circle(window, 'yellow', (self.px, self.py), 2)
 
-class Block:
+
+class Block(Factory):
     def __init__(self, px, py, size):
-        Factory.objects.append(self)
+        storage.objects.append(self)
         self.type = 'block'
 
         self.rect = pygame.Rect(px, py, size, size)
@@ -127,26 +126,24 @@ class Block:
 
     def damage(self, value):
         self.hp -= value
-        if self.hp <= 0: Factory.objects.remove(self)
+        if self.hp <= 0: storage.objects.remove(self)
 
 
 # class B
 
 def create_objects():
     window.fill((0, 0, 0))
-    for bullet in factory.bullets:
+    for bullet in storage.bullets:
         bullet.create_objects()
-    # if len(bullets) == 0:
-    #        print('Массив пуль пуст')
-    for obj in factory.objects:
+    for obj in storage.objects:
         obj.create_objects()
 
 
 def update_objects(keys):
-    for bullet in factory.bullets:
+    for bullet in storage.bullets:
         bullet.update()
         # print(bullet)
-    for obj in factory.objects:
+    for obj in storage.objects:
         obj.update(keys)
 
 
@@ -155,16 +152,17 @@ def make_player1_tank():
 
 
 def make_player2_tank():
-    Tank('red', 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_KP_ENTER))
+    Tank('red', 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL))
+
 
 def create_blocks(N):
     for _ in range(N):
         while True:
-            x = randint(0, WIDTH // TILE - 1) * TILE
-            y = randint(0, HEIGHT // TILE - 1) * TILE
+            x = randint(0, window.get_width() // TILE - 1) * TILE - 1
+            y = randint(0, window.get_height() // TILE - 1) * TILE - 1
             rect = pygame.Rect(x, y, TILE, TILE)
             fined = False
-            for obj in Factory.objects:
+            for obj in storage.objects:
                 if rect.colliderect(obj.rect): fined = True
 
             if not fined: break
