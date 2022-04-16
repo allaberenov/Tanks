@@ -1,9 +1,9 @@
 from random import randint
-from graph_elements import window, TILE, TANK_SIZE
+from graph_elements import window, TILE, TANK_SIZE, UI
 import pygame
 
 DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
-
+ui = UI()
 
 class Storage:
     objects = []
@@ -24,11 +24,12 @@ class Factory:
 class Tank(Factory):
     def __init__(self, color, px, py, direct, keylist):
         Storage.objects.append(self)
+        self.type = 'tank'
         self.color = color
         self.rect = pygame.Rect(px, py, TANK_SIZE, TANK_SIZE)
         self.direct = direct
         self.moveSpeed = 2
-        self.hp = 1
+        self.hp = 5
 
         self.shotTimer = 0
         self.shotDelay = 60
@@ -100,9 +101,9 @@ class Bullet(Factory):
         else:
             for obj in Storage.objects:
                 if obj != self.parent and obj.rect.collidepoint(self.px, self.py):
-                    # obj.damage(self.damage)
+                    obj.damage(self.damage)
                     Storage.bullets.remove(self)
-                    Storage.objects.remove(obj)
+                    #Storage.objects.remove(obj)
                     break
 
     def create_objects(self):
@@ -137,6 +138,7 @@ def create_objects():
         bullet.create_objects()
     for obj in storage.objects:
         obj.create_objects()
+    ui.draw(storage.objects)
 
 
 def update_objects(keys):
@@ -145,7 +147,7 @@ def update_objects(keys):
         # print(bullet)
     for obj in storage.objects:
         obj.update(keys)
-
+    ui.update()
 
 def make_player1_tank():
     Tank('blue', 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE))
@@ -159,7 +161,7 @@ def create_blocks(N):
     for _ in range(N):
         while True:
             x = randint(0, window.get_width() // TILE - 1) * TILE - 1
-            y = randint(0, window.get_height() // TILE - 1) * TILE - 1
+            y = randint(1, window.get_height() // TILE - 1) * TILE - 1
             rect = pygame.Rect(x, y, TILE, TILE)
             fined = False
             for obj in storage.objects:
