@@ -9,8 +9,12 @@ class Storage:
     objects = []
     bullets = []
 
-
-storage = Storage()
+class Singleton(Storage):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Singleton, cls).__new__(cls)
+        return cls
+storage = Singleton()
 
 
 class Factory:
@@ -23,7 +27,7 @@ class Factory:
 
 class Tank(Factory):
     def __init__(self, color, px, py, direct, keylist):
-        Storage.objects.append(self)
+        storage.objects.append(self)
         self.color = color
         self.rect = pygame.Rect(px, py, TANK_SIZE, TANK_SIZE)
         self.direct = direct
@@ -98,11 +102,11 @@ class Bullet(Factory):
         if self.px < 0 or self.px > window.get_width() or self.py < 0 or self.py > window.get_height():
             storage.bullets.remove(self)
         else:
-            for obj in Storage.objects:
+            for obj in storage.objects:
                 if obj != self.parent and obj.rect.collidepoint(self.px, self.py):
                     # obj.damage(self.damage)
-                    Storage.bullets.remove(self)
-                    Storage.objects.remove(obj)
+                    storage.bullets.remove(self)
+                    storage.objects.remove(obj)
                     break
 
     def create_objects(self):
@@ -127,9 +131,6 @@ class Block(Factory):
     def damage(self, value):
         self.hp -= value
         if self.hp <= 0: storage.objects.remove(self)
-
-
-# class B
 
 def create_objects():
     window.fill((0, 0, 0))
