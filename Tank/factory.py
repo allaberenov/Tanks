@@ -140,7 +140,7 @@ class Bullet(Factory):
                     break
 
     def create_objects(self):
-        pygame.draw.circle(window, 'red', (self.px, self.py), 2)
+        pygame.draw.circle(window, 635610, (self.px, self.py), 2)
 
 
 class Bang(Factory):
@@ -201,11 +201,11 @@ def update_objects(keys):
 
 
 def make_player1_tank():
-    Tank('blue', 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE))
+    Tank((255, 0, 0), 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE))
 
 
 def make_player2_tank():
-    Tank('red', 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL))
+    Tank((0,0, 255), 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL))
 
 
 def create_blocks(N):
