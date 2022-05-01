@@ -52,7 +52,7 @@ class Tank(Factory):
         self.rect = pygame.Rect(px, py, TANK_SIZE, TANK_SIZE)
         self.direct = direct
         self.moveSpeed = 2
-        self.hp = 1
+        self.hp = 5
 
         self.shotTimer = 0
         self.shotDelay = 60

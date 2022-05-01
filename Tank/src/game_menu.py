@@ -4,6 +4,10 @@ import webbrowser
 
 from menu_attributes import Button
 
+BUTTON1_pos = (25, 50)
+BUTTON2_pos = (25, 120)
+BUTTON3_pos = (25, 190)
+
 
 def open_menu():
     WIDTH, HEIGHT = 800, 500
@@ -16,9 +20,9 @@ def open_menu():
     window.blit(background, (0, 0))
     pygame.display.update()
 
-    startgame_button = Button(window, 25, 50, "New game", (220, 220, 220))
-    feedback_button = Button(window, 25, 120, "Support", (0, 220, 220))
-    finishgame_button = Button(window, 25, 190, "Exit", (0, 220, 220))
+    startgame_button = Button(window, BUTTON1_pos, "New game")
+    feedback_button = Button(window, BUTTON2_pos, "Support")
+    finishgame_button = Button(window, BUTTON3_pos, "Exit")
 
     buttons = [startgame_button, feedback_button, finishgame_button]
 
@@ -30,10 +34,10 @@ def open_menu():
         for button in buttons:
             button.update()
             if button.pressed() == "New game":
-                time.sleep(0.3)
+                time.sleep(0.1)
                 return True
             elif button.pressed() == "Exit":
-                time.sleep(0.3)
+                time.sleep(0.1)
                 return False
             elif button.pressed() == "Support":
                 webbrowser.open('https://vk.com/allaberenov.kerim', new=1)

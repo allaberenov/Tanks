@@ -3,23 +3,24 @@ import pygame
 pygame.init()
 
 BUTTON_DEFAULT_SIZE = [250, 100, 50]
-BUTTON_DEFAULT_COLOR = [(39, 89, 46), (64, 166, 48)]
+BUTTON_DEFAULT_COLOR = [(0, 220, 220), (64, 166, 48)]
 INPUT_FON_SIZE = 30
+BUTTON_TEXT_COLOR = (0, 220, 220)
 
 
 class Button:
-    def __init__(self, surface, x, y, text, text_color, color=BUTTON_DEFAULT_COLOR[0], length=BUTTON_DEFAULT_SIZE[0],
+    def __init__(self, surface, cords, text, text_color=BUTTON_TEXT_COLOR, color=BUTTON_DEFAULT_COLOR[0],
+                 length=BUTTON_DEFAULT_SIZE[0],
                  width=BUTTON_DEFAULT_SIZE[1], height=BUTTON_DEFAULT_SIZE[2]):
         self.surface = surface
         self.color = color
-        self.x = x
-        self.y = y
+        self.cords = cords
         self.length = length
         self.height = height
         self.width = width
         self.text = text
         self.text_color = text_color
-        self.rect = pygame.Rect(self.x, self.y, self.length, self.height)
+        self.rect = pygame.Rect(self.cords[0], self.cords[1], self.length, self.height)
 
     def update(self):
         self.draw_button()
@@ -30,7 +31,8 @@ class Button:
         myFont = pygame.font.SysFont("Times New Roman", INPUT_FON_SIZE, bold=True)
         myText = myFont.render(self.text, 1, self.text_color)
         self.surface.blit(myText, (
-            (self.x + self.length / 2) - myText.get_width() / 2, (self.y + self.height / 2) - myText.get_height() / 2))
+            (self.cords[0] + self.length / 2) - myText.get_width() / 2,
+            (self.cords[1] + self.height / 2) - myText.get_height() / 2))
         return self.surface
 
     def draw_button(self):
@@ -41,10 +43,12 @@ class Button:
             if alpha <= 0:
                 alpha = 1
             s.set_alpha(alpha)
-            pygame.draw.rect(s, self.color, (self.x - i, self.y - i, self.length + i, self.height + i), self.width)
-            self.surface.blit(s, (self.x - i, self.y - i))
-        pygame.draw.rect(self.surface, self.color, (self.x, self.y, self.length, self.height), 0)
-        pygame.draw.rect(self.surface, BUTTON_DEFAULT_COLOR[1], (self.x, self.y, self.length, self.height))
+            pygame.draw.rect(s, self.color, (self.cords[0] - i, self.cords[1] - i, self.length + i, self.height + i),
+                             self.width)
+            self.surface.blit(s, (self.cords[0] - i, self.cords[1] - i))
+        pygame.draw.rect(self.surface, self.color, (self.cords[0], self.cords[1], self.length, self.height), 0)
+        pygame.draw.rect(self.surface, BUTTON_DEFAULT_COLOR[1],
+                         (self.cords[0], self.cords[1], self.length, self.height))
         return self.surface
 
     def pressed(self):

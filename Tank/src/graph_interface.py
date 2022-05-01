@@ -20,9 +20,12 @@ class UI:
         i = 0
         for obj in objects:
             if obj.type == 'tank':
-                pygame.draw.rect(window, obj.color, (5 + i * 70, 5, 22, 22))
+                Rect_img = (5 + i * 70, 5, 22, 22)
+                pygame.draw.rect(window, obj.color, Rect_img)
 
-                text = fontUI.render(str(obj.hp), True, obj.color)
-                rect = text.get_rect(center=(5 + i * 70 + 32, 5 + 11))
+                text = fontUI.render("HP:"+str(obj.hp), True, obj.color)
+
+                Rect_text = (i * 70 + 32*1.6, 5 + 11)
+                rect = text.get_rect(center=Rect_text)
                 window.blit(text, rect)
                 i += 1

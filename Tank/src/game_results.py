@@ -4,13 +4,12 @@ import pygame
 
 from menu_attributes import Button
 
-imgTanks = [
-    pygame.image.load('images/tank1.png'),
-    pygame.image.load('images/tank2.png'),
-]
-
 WIDTH, HEIGHT = 800, 500
+TEXT_POSITION = (60, 15)
 
+WINNER_IMG_pos = (20, 20)
+BUTTON1_pos = (25, 420)
+BUTTON2_pos = (200, 420)
 
 def result_menu(object):
     window = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -21,14 +20,16 @@ def result_menu(object):
     window.blit(background, (0, 0))
 
     myFont = pygame.font.SysFont("Times New Roman", 30, bold=True)
-    myText = myFont.render("Player " + str(object.rank+1) + " win!"+"     Last hp: " + str(object.hp), 1, object.color)
-    window.blit(myText, (60, 15))
-    pygame.display.update()
 
-    window.blit(object.image, (20, 20))
+    long_space = '         '
+    result_message = "Player " + str(object.rank + 1) + " win!" + long_space + "Last hp: " + str(object.hp)
+    myText = myFont.render(result_message, 1, object.color)
+    window.blit(myText, TEXT_POSITION)
 
-    startgame_button = Button(window, 25, 420, "Main menu", (0, 220, 220), length=155)
-    finishgame_button = Button(window, 200, 420, "Exit", (0, 220, 220), length=155)
+    window.blit(object.image, WINNER_IMG_pos)
+
+    startgame_button = Button(window, BUTTON1_pos, "Main menu", length=155)
+    finishgame_button = Button(window, BUTTON2_pos, "Exit", length=155)
     buttons = [startgame_button, finishgame_button]
 
     play = True
