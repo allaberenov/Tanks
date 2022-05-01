@@ -56,8 +56,7 @@ class Button:
                         self.color = (100, 100, 100)
                         self.text_color = (100, 100, 100)
                         if pygame.mouse.get_pressed()[0]:
-                            print("Mouse_pressed")
-                            return True
+                            return self.text
                         return False
         self.color = (39, 89, 46)
         self.text_color = (250, 250, 250)

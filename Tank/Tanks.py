@@ -1,15 +1,18 @@
 import pygame
-import game_menu
+import game_menu, game_results
 import factory
 
 clock = pygame.time.Clock()
 FPS = 60
+play = True
+
+if not game_menu.open_menu():
+    play = False
 
 factory.make_player1_tank()
 factory.make_player2_tank()
-
 factory.create_blocks(80)
-play = True
+
 while play:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -24,4 +27,8 @@ while play:
     pygame.display.update()
     clock.tick(FPS)
 
-pygame.quit()
+    if factory.get_winnter():
+        pygame.quit()
+        break
+
+game_results.result_menu(factory.get_winnter())
