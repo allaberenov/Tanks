@@ -52,7 +52,7 @@ class Tank(Factory):
         self.rect = pygame.Rect(px, py, TANK_SIZE, TANK_SIZE)
         self.direct = direct
         self.moveSpeed = 2
-        self.hp = 5
+        self.hp = 1
 
         self.shotTimer = 0
         self.shotDelay = 60
@@ -232,4 +232,10 @@ def get_winnter():
         for winner in storage.objects:
             if winner.type == 'tank':
                 return winner
+    else:
+        return False
 
+
+def free_cache():
+    storage.objects = []
+    storage.bullets = []

@@ -30,10 +30,10 @@ def open_menu():
         for button in buttons:
             button.update()
             if button.pressed() == "New game":
-                time.sleep(0.5)
+                time.sleep(0.3)
                 return True
             elif button.pressed() == "Exit":
-                time.sleep(0.5)
+                time.sleep(0.3)
                 return False
             elif button.pressed() == "Support":
                 webbrowser.open('https://vk.com/allaberenov.kerim', new=1)
