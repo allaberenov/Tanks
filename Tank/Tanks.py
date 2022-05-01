@@ -17,6 +17,7 @@ while play:
     keys = pygame.key.get_pressed()
 
     factory.update_objects(keys)
+
     factory.create_objects()
 
     pygame.display.update()

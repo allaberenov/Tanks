@@ -1,8 +1,9 @@
 from random import randint
-from graph_elements import window, TILE, TANK_SIZE
+from graph_elements import window, TILE, TANK_SIZE, UI
 import pygame
 
 DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+ui = UI()
 
 
 class Storage:
@@ -10,7 +11,32 @@ class Storage:
     bullets = []
 
 
-storage = Storage()
+class Singleton(Storage):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Singleton, cls).__new__(cls)
+        return cls
+
+
+storage = Singleton()
+
+'''Тектуры для объектов'''
+imgBrick = pygame.image.load('images/block_brick.png')
+imgTanks = [
+    pygame.image.load('images/tank1.png'),
+    pygame.image.load('images/tank2.png'),
+    pygame.image.load('images/tank3.png'),
+    pygame.image.load('images/tank4.png'),
+    pygame.image.load('images/tank5.png'),
+    pygame.image.load('images/tank6.png'),
+    pygame.image.load('images/tank7.png'),
+    pygame.image.load('images/tank8.png'),
+]
+imgBangs = [
+    pygame.image.load('images/bang1.png'),
+    pygame.image.load('images/bang2.png'),
+    pygame.image.load('images/bang3.png'),
+]
 
 
 class Factory:
@@ -23,12 +49,13 @@ class Factory:
 
 class Tank(Factory):
     def __init__(self, color, px, py, direct, keylist):
-        Storage.objects.append(self)
+        self.type = 'tank'
+        storage.objects.append(self)
         self.color = color
         self.rect = pygame.Rect(px, py, TANK_SIZE, TANK_SIZE)
         self.direct = direct
         self.moveSpeed = 2
-        self.hp = 1
+        self.hp = 5
 
         self.shotTimer = 0
         self.shotDelay = 60
@@ -41,7 +68,15 @@ class Tank(Factory):
         self.keyDOWN = keylist[3]
         self.keySHOT = keylist[4]
 
-    def update(self, keys):
+        self.rank = 0
+        self.image = pygame.transform.rotate(imgTanks[self.rank], -self.direct * 90)
+        self.rect = self.image.get_rect(center=self.rect.center)
+
+    def update(self, keys, *args):
+        self.image = pygame.transform.rotate(imgTanks[self.rank], -self.direct * 90)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() - 5, self.image.get_height() - 5))
+        self.rect = self.image.get_rect(center=self.rect.center)
+
         oldX, oldY = self.rect.topleft
         if keys[self.keyLEFT] and self.rect.x >= 0:
             self.rect.x -= self.moveSpeed
@@ -57,7 +92,7 @@ class Tank(Factory):
             self.direct = 2
 
         for obj in storage.objects:
-            if obj != self and self.rect.colliderect(obj.rect):
+            if obj != self and (obj.type == 'block' or obj.type == 'tank') and obj.rect.colliderect(self.rect):
                 self.rect.topleft = oldX, oldY
 
         if keys[self.keySHOT] and self.shotTimer == 0:
@@ -70,11 +105,7 @@ class Tank(Factory):
             self.shotTimer -= 1
 
     def create_objects(self):
-        pygame.draw.rect(window, self.color, self.rect)
-
-        x = self.rect.centerx + DIRECTS[self.direct][0] * 30
-        y = self.rect.centery + DIRECTS[self.direct][1] * 30
-        pygame.draw.line(window, 'white', self.rect.center, (x, y), 4)
+        window.blit(self.image, self.rect)
 
     def damage(self, value):
         self.hp -= value
@@ -98,15 +129,37 @@ class Bullet(Factory):
         if self.px < 0 or self.px > window.get_width() or self.py < 0 or self.py > window.get_height():
             storage.bullets.remove(self)
         else:
-            for obj in Storage.objects:
-                if obj != self.parent and obj.rect.collidepoint(self.px, self.py):
+            for obj in storage.objects:
+                if obj != self.parent and obj.type != 'bang' and obj.rect.collidepoint(self.px, self.py):
+                    obj.damage(self.damage)
+                    # Storage.bullets.remove(self)
+                    # Storage.objects.remove(obj)
                     # obj.damage(self.damage)
-                    Storage.bullets.remove(self)
-                    Storage.objects.remove(obj)
+                    storage.bullets.remove(self)
+                    Bang(self.px, self.py)
                     break
 
     def create_objects(self):
-        pygame.draw.circle(window, 'yellow', (self.px, self.py), 2)
+        pygame.draw.circle(window, 635610, (self.px, self.py), 2)
+
+
+class Bang(Factory):
+    def __init__(self, px, py):
+        storage.objects.append(self)
+        self.type = 'bang'
+
+        self.px, self.py = px, py
+        self.frame = 0
+
+    def update(self, *args):
+        self.frame += 0.2
+        if self.frame >= 3:
+            storage.objects.remove(self)
+
+    def create_objects(self):
+        image = imgBangs[int(self.frame)]
+        rect = image.get_rect(center=(self.px, self.py))
+        window.blit(image, rect)
 
 
 class Block(Factory):
@@ -121,15 +174,13 @@ class Block(Factory):
         pass
 
     def create_objects(self):
-        pygame.draw.rect(window, 'green', self.rect)
-        pygame.draw.rect(window, 'gray20', self.rect, 2)
+        window.blit(imgBrick, self.rect)
 
     def damage(self, value):
         self.hp -= value
-        if self.hp <= 0: storage.objects.remove(self)
+        if self.hp <= 0:
+            storage.objects.remove(self)
 
-
-# class B
 
 def create_objects():
     window.fill((0, 0, 0))
@@ -137,6 +188,7 @@ def create_objects():
         bullet.create_objects()
     for obj in storage.objects:
         obj.create_objects()
+    ui.draw(storage.objects)
 
 
 def update_objects(keys):
@@ -145,26 +197,29 @@ def update_objects(keys):
         # print(bullet)
     for obj in storage.objects:
         obj.update(keys)
+    ui.update()
 
 
 def make_player1_tank():
-    Tank('blue', 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE))
+    Tank((255, 0, 0), 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE))
 
 
 def make_player2_tank():
-    Tank('red', 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL))
+    Tank((0,0, 255), 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL))
 
 
 def create_blocks(N):
     for _ in range(N):
         while True:
             x = randint(0, window.get_width() // TILE - 1) * TILE - 1
-            y = randint(0, window.get_height() // TILE - 1) * TILE - 1
+            y = randint(1, window.get_height() // TILE - 1) * TILE - 1
             rect = pygame.Rect(x, y, TILE, TILE)
             fined = False
             for obj in storage.objects:
-                if rect.colliderect(obj.rect): fined = True
+                if rect.colliderect(obj.rect):
+                    fined = True
 
-            if not fined: break
+            if not fined:
+                break
 
         Block(x, y, TILE)

@@ -1,1 +1,4 @@
-Запуск игры осуществляется открытием исполняемого файла Tanks в директории Tank
+git clone https://github.com/allaberenov/kerim.git
+cd kerim/Tank
+python3 Tanks.py
+
