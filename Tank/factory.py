@@ -1,6 +1,8 @@
-from random import randint
-from graph_elements import window, TILE, TANK_SIZE, UI
 import pygame
+
+from graph_interface import window, TILE, TANK_SIZE, UI
+from random import randint
+
 
 DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 ui = UI()

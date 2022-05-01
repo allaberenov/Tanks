@@ -1,4 +1,5 @@
 import pygame
+import game_menu
 import factory
 
 clock = pygame.time.Clock()
