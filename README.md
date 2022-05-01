@@ -98,7 +98,7 @@ ___
 
 ```
 cd Tank/src
-python3 Tank.py
+python3 Tanks.py
 
 ```
 ___

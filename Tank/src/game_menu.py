@@ -16,7 +16,7 @@ def open_menu():
 
     pygame.init()
     pygame.display.set_caption("*****Tanks*****")
-    background = pygame.image.load('images/background.jpg')
+    background = pygame.image.load('../images/background.jpg')
     window.blit(background, (0, 0))
     pygame.display.update()
 
