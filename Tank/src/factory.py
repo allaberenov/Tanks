@@ -1,9 +1,12 @@
-from random import randint
-from graph_elements import window, TILE, TANK_SIZE, UI
 import pygame
+
+from graph_interface import window, TILE, TANK_SIZE, UI
+from random import randint
 
 DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 ui = UI()
+
+PLAYER_NUMBER = [0, 1]
 
 
 class Storage:
@@ -21,21 +24,15 @@ class Singleton(Storage):
 storage = Singleton()
 
 '''Тектуры для объектов'''
-imgBrick = pygame.image.load('images/block_brick.png')
+imgBrick = pygame.image.load('../images/block_brick.png')
 imgTanks = [
-    pygame.image.load('images/tank1.png'),
-    pygame.image.load('images/tank2.png'),
-    pygame.image.load('images/tank3.png'),
-    pygame.image.load('images/tank4.png'),
-    pygame.image.load('images/tank5.png'),
-    pygame.image.load('images/tank6.png'),
-    pygame.image.load('images/tank7.png'),
-    pygame.image.load('images/tank8.png'),
+    pygame.image.load('../images/tank1.png'),
+    pygame.image.load('../images/tank2.png'),
 ]
 imgBangs = [
-    pygame.image.load('images/bang1.png'),
-    pygame.image.load('images/bang2.png'),
-    pygame.image.load('images/bang3.png'),
+    pygame.image.load('../images/bang1.png'),
+    pygame.image.load('../images/bang2.png'),
+    pygame.image.load('../images/bang3.png'),
 ]
 
 
@@ -48,7 +45,7 @@ class Factory:
 
 
 class Tank(Factory):
-    def __init__(self, color, px, py, direct, keylist):
+    def __init__(self, color, px, py, direct, keylist, player_number):
         self.type = 'tank'
         storage.objects.append(self)
         self.color = color
@@ -68,13 +65,16 @@ class Tank(Factory):
         self.keyDOWN = keylist[3]
         self.keySHOT = keylist[4]
 
-        self.rank = 0
-        self.image = pygame.transform.rotate(imgTanks[self.rank], -self.direct * 90)
+        self.rank = player_number
+        self.image = pygame.transform.rotate(
+            imgTanks[self.rank], -self.direct * 90)
         self.rect = self.image.get_rect(center=self.rect.center)
 
     def update(self, keys, *args):
-        self.image = pygame.transform.rotate(imgTanks[self.rank], -self.direct * 90)
-        self.image = pygame.transform.scale(self.image, (self.image.get_width() - 5, self.image.get_height() - 5))
+        self.image = pygame.transform.rotate(
+            imgTanks[self.rank], -self.direct * 90)
+        self.image = pygame.transform.scale(
+            self.image, (self.image.get_width() - 5, self.image.get_height() - 5))
         self.rect = self.image.get_rect(center=self.rect.center)
 
         oldX, oldY = self.rect.topleft
@@ -98,7 +98,8 @@ class Tank(Factory):
         if keys[self.keySHOT] and self.shotTimer == 0:
             dx = DIRECTS[self.direct][0] * self.bulletSpeed
             dy = DIRECTS[self.direct][1] * self.bulletSpeed
-            Bullet(self, self.rect.centerx, self.rect.centery, dx, dy, self.bulletDamage)
+            Bullet(self, self.rect.centerx, self.rect.centery,
+                   dx, dy, self.bulletDamage)
             self.shotTimer = self.shotDelay
 
         if self.shotTimer > 0:
@@ -201,11 +202,13 @@ def update_objects(keys):
 
 
 def make_player1_tank():
-    Tank((255, 0, 0), 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE))
+    Tank((0, 250, 0), 100, 275, 0, (pygame.K_a, pygame.K_d,
+         pygame.K_w, pygame.K_s, pygame.K_SPACE), PLAYER_NUMBER[0])
 
 
 def make_player2_tank():
-    Tank((0,0, 255), 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL))
+    Tank((0, 0, 255), 650, 275, 0, (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_RCTRL),
+         PLAYER_NUMBER[1])
 
 
 def create_blocks(N):
@@ -223,3 +226,21 @@ def create_blocks(N):
                 break
 
         Block(x, y, TILE)
+
+
+def get_winnter():
+    number_of_tanks = 0
+    for winner in storage.objects:
+        if winner.type == 'tank':
+            number_of_tanks += 1
+    if number_of_tanks == 1:
+        for winner in storage.objects:
+            if winner.type == 'tank':
+                return winner
+    else:
+        return False
+
+
+def free_cache():
+    storage.objects = []
+    storage.bullets = []
