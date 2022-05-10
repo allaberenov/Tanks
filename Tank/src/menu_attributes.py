@@ -59,9 +59,7 @@ class Button:
                     if mouse[1] < self.rect.bottomright[1]:
                         self.color = (100, 100, 100)
                         self.text_color = (100, 100, 100)
-                        if pygame.mouse.get_pressed()[0]:
-                            return self.text
-                        return False
+                        return self.text
         self.color = (39, 89, 46)
         self.text_color = (250, 250, 250)
         return False
