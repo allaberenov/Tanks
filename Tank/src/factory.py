@@ -26,14 +26,15 @@ storage = Singleton()
 '''Тектуры для объектов'''
 imgBrick = pygame.image.load('images/block_brick.png')
 imgGrass = pygame.image.load('images/liana.png')
+
 imgTanks = [
-    pygame.image.load('images/tank1.png'),
-    pygame.image.load('images/tank2.png'),
+    pygame.image.load('./images/tank1.png'),
+    pygame.image.load('./images/tank2.png'),
 ]
 imgBangs = [
-    pygame.image.load('images/bang1.png'),
-    pygame.image.load('images/bang2.png'),
-    pygame.image.load('images/bang3.png'),
+    pygame.image.load('./images/bang1.png'),
+    pygame.image.load('./images/bang2.png'),
+    pygame.image.load('./images/bang3.png'),
 ]
 
 '''Звуки для объектов'''
@@ -74,12 +75,15 @@ class Tank(Factory):
         self.keySHOT = keylist[4]
 
         self.rank = player_number
-        self.image = pygame.transform.rotate(imgTanks[self.rank], -self.direct * 90)
+        self.image = pygame.transform.rotate(
+            imgTanks[self.rank], -self.direct * 90)
         self.rect = self.image.get_rect(center=self.rect.center)
 
     def update(self, keys, *args):
-        self.image = pygame.transform.rotate(imgTanks[self.rank], -self.direct * 90)
-        self.image = pygame.transform.scale(self.image, (self.image.get_width() - 5, self.image.get_height() - 5))
+        self.image = pygame.transform.rotate(
+            imgTanks[self.rank], -self.direct * 90)
+        self.image = pygame.transform.scale(
+            self.image, (self.image.get_width() - 5, self.image.get_height() - 5))
         self.rect = self.image.get_rect(center=self.rect.center)
 
         oldX, oldY = self.rect.topleft
@@ -107,7 +111,8 @@ class Tank(Factory):
             Tanksound[0].play()
             dx = DIRECTS[self.direct][0] * self.bulletSpeed
             dy = DIRECTS[self.direct][1] * self.bulletSpeed
-            Bullet(self, self.rect.centerx, self.rect.centery, dx, dy, self.bulletDamage)
+            Bullet(self, self.rect.centerx, self.rect.centery,
+                   dx, dy, self.bulletDamage)
             self.shotTimer = self.shotDelay
 
         if self.shotTimer > 0:
@@ -219,7 +224,8 @@ def update_objects(keys):
 
 
 def make_player1_tank():
-    Tank((0, 250, 0), 100, 275, 0, (pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_SPACE), PLAYER_NUMBER[0])
+    Tank((0, 250, 0), 100, 275, 0, (pygame.K_a, pygame.K_d,
+         pygame.K_w, pygame.K_s, pygame.K_SPACE), PLAYER_NUMBER[0])
 
 
 def make_player2_tank():

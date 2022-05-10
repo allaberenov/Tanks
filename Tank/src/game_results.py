@@ -11,18 +11,21 @@ WINNER_IMG_pos = (20, 20)
 BUTTON1_pos = (25, 420)
 BUTTON2_pos = (200, 420)
 
+
 def result_menu(object):
     window = pygame.display.set_mode((WIDTH, HEIGHT))
 
     pygame.init()
     pygame.display.set_caption("*****Tanks*****")
-    background = pygame.image.load('images/result_background.png')
+    background = pygame.image.load('../images/result_background.png')
     window.blit(background, (0, 0))
 
     myFont = pygame.font.SysFont("Times New Roman", 30, bold=True)
 
     long_space = '         '
-    result_message = "Player " + str(object.rank + 1) + " win!" + long_space + "Last hp: " + str(object.hp)
+    result_message = "Player " + \
+        str(object.rank + 1) + " win!" + \
+        long_space + "Last hp: " + str(object.hp)
     myText = myFont.render(result_message, 1, object.color)
     window.blit(myText, TEXT_POSITION)
 
