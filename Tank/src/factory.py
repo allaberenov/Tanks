@@ -24,8 +24,8 @@ class Singleton(Storage):
 storage = Singleton()
 
 '''Тектуры для объектов'''
-imgBrick = pygame.image.load('images/block_brick.png')
-imgGrass = pygame.image.load('images/liana.png')
+imgBrick = pygame.image.load('./images/block_brick.png')
+imgGrass = pygame.image.load('./images/liana.png')
 
 imgTanks = [
     pygame.image.load('./images/tank1.png'),
