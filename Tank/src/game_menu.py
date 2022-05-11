@@ -7,7 +7,7 @@ from menu_attributes import Button
 BUTTON1_pos = (25, 50)
 BUTTON2_pos = (25, 120)
 BUTTON3_pos = (25, 190)
-BUTTON4_pos = (25, 250)
+BUTTON4_pos = (25, 260)
 pygame.mixer.music.load("./sounds/World of Tanks .mp3")
 
 

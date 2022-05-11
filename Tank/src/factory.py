@@ -7,7 +7,7 @@ DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 ui = UI()
 
 PLAYER_NUMBER = [0, 1]
-
+BLOCK_TYPES = ['block_brick', 'block_liana']
 
 class Storage:
     objects = []
@@ -25,8 +25,7 @@ storage = Singleton()
 
 '''Тектуры для объектов'''
 imgBrick = pygame.image.load('./images/block_brick.png')
-imgGrass = pygame.image.load('./images/liana.png')
-
+imgLiana = pygame.image.load('./images/block_liana.png')
 imgTanks = [
     pygame.image.load('./images/tank1.png'),
     pygame.image.load('./images/tank2.png'),
@@ -38,7 +37,7 @@ imgBangs = [
 ]
 
 '''Звуки для объектов'''
-Tanksound = [
+Tanksounds = [
     pygame.mixer.Sound("./sounds/tank_shot.wav"),
     pygame.mixer.Sound("./sounds/explosion.wav"),
     #pygame.mixer.Sound("./sounds/driving.wav")
@@ -101,14 +100,10 @@ class Tank(Factory):
             self.direct = 2
 
         for obj in storage.objects:
-
-            "vervevjfvnoenveorvnoeriveifvepifveifferfrerg"
-            if obj != self and (obj.type == '2' or obj.type == 'tank') and obj.rect.colliderect(self.rect):
+            if obj != self and (obj.type == 'block_brick' or obj.type == 'tank') and obj.rect.colliderect(self.rect):
                 self.rect.topleft = oldX, oldY
 
         if keys[self.keySHOT] and self.shotTimer == 0:
-            Tanksound[0].set_volume(1.8)
-            Tanksound[0].play()
             dx = DIRECTS[self.direct][0] * self.bulletSpeed
             dy = DIRECTS[self.direct][1] * self.bulletSpeed
             Bullet(self, self.rect.centerx, self.rect.centery,
@@ -135,6 +130,7 @@ class Bullet(Factory):
         self.px, self.py = px, py
         self.dx, self.dy = dx, dy
         self.damage = damage
+        Tanksounds[0].play()
 
     def update(self):
         self.px += self.dx
@@ -144,14 +140,11 @@ class Bullet(Factory):
             storage.bullets.remove(self)
         else:
             for obj in storage.objects:
-                if obj != self.parent and obj.type != 'bang' and obj.rect.collidepoint(self.px, self.py):
+                if obj != self.parent and obj.type != 'bang' and obj.type != 'block_liana' and obj.rect.collidepoint(self.px, self.py):
                     obj.damage(self.damage)
                     # Storage.bullets.remove(self)
                     # Storage.objects.remove(obj)
                     # obj.damage(self.damage)
-                    Tanksound[1].set_volume(0.3)
-                    Tanksound[1].play()
-
                     storage.bullets.remove(self)
                     Bang(self.px, self.py)
                     break
@@ -167,6 +160,7 @@ class Bang(Factory):
 
         self.px, self.py = px, py
         self.frame = 0
+        Tanksounds[1].play()
 
     def update(self, *args):
         self.frame += 0.2
@@ -183,6 +177,7 @@ class Block(Factory):
     def __init__(self, px, py, size, type):
         storage.objects.append(self)
         self.type = type
+
         self.rect = pygame.Rect(px, py, size, size)
         self.hp = 1
 
@@ -190,19 +185,15 @@ class Block(Factory):
         pass
 
     def create_objects(self):
-        if self.type == 1:
-            window.blit(imgGrass, self.rect)
-        elif self.type == 2:
+        if self.type == 'block_brick':
             window.blit(imgBrick, self.rect)
-
+        elif self.type == 'block_liana':
+            window.blit(imgLiana, self.rect)
 
     def damage(self, value):
-        if self.type==1:
-            pass
-        elif self.type == 2:
-            self.hp -= value
-            if self.hp <= 0:
-                storage.objects.remove(self)
+        self.hp -= value
+        if self.hp <= 0:
+            storage.objects.remove(self)
 
 
 def create_objects():
@@ -236,10 +227,8 @@ def make_player2_tank():
 def create_blocks(N):
     for _ in range(N):
         while True:
-            block = randint(0, 1)
             x = randint(0, window.get_width() // TILE - 1) * TILE - 1
             y = randint(1, window.get_height() // TILE - 1) * TILE - 1
-            type = randint(1, 2)
             rect = pygame.Rect(x, y, TILE, TILE)
             fined = False
             for obj in storage.objects:
@@ -249,7 +238,7 @@ def create_blocks(N):
             if not fined:
                 break
 
-        Block(x, y, TILE, type)
+        Block(x, y, TILE, BLOCK_TYPES[randint(0, 1)])
 
 
 def get_winnter():
