@@ -22,7 +22,7 @@ def result_menu(object):
     pygame.display.update()
 
     pygame.mixer.music.load("./sounds/result_menu.flac")
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(loops=-1)
 
     myFont = pygame.font.SysFont("Times New Roman", 30, bold=True)
 
