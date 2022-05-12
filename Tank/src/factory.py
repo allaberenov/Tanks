@@ -24,25 +24,25 @@ class Singleton(Storage):
 storage = Singleton()
 
 '''Тектуры для объектов'''
-imgBrick = pygame.image.load('./images/block_brick.png')
-imgLiana = pygame.image.load('./images/block_liana.png')
-imgIron = pygame.image.load('./images/block_iron.png')
+imgBrick = pygame.image.load('./../images/block_brick.png')
+imgLiana = pygame.image.load('./../images/block_liana.png')
+imgIron = pygame.image.load('./../images/block_iron.png')
 BLOCK_TYPES = ['block_brick', 'block_liana', 'block_iron']
 imgTanks = [
-    pygame.image.load('./images/tank1.png'),
-    pygame.image.load('./images/tank2.png'),
+    pygame.image.load('./../images/tank1.png'),
+    pygame.image.load('./../images/tank2.png'),
 ]
 imgBangs = [
-    pygame.image.load('./images/bang1.png'),
-    pygame.image.load('./images/bang2.png'),
-    pygame.image.load('./images/bang3.png'),
+    pygame.image.load('./../images/bang1.png'),
+    pygame.image.load('./../images/bang2.png'),
+    pygame.image.load('./../images/bang3.png'),
 ]
 
 '''Звуки для объектов'''
 Tanksounds = [
-    pygame.mixer.Sound("./sounds/tank_shot.wav"),
-    pygame.mixer.Sound("./sounds/explosion.wav"),
-    # pygame.mixer.Sound("./sounds/driving.wav")
+    pygame.mixer.Sound("./../sounds/tank_shot.wav"),
+    pygame.mixer.Sound("./../sounds/explosion.wav"),
+    # pygame.mixer.Sound("./../sounds/driving.wav")
 ]
 
 

@@ -8,7 +8,7 @@ BUTTON1_pos = (25, 50)
 BUTTON2_pos = (25, 120)
 BUTTON3_pos = (25, 190)
 BUTTON4_pos = (25, 260)
-pygame.mixer.music.load("./sounds/World of Tanks .mp3")
+pygame.mixer.music.load("./../sounds/World of Tanks .mp3")
 
 
 def open_menu():
@@ -20,7 +20,7 @@ def open_menu():
 
     pygame.init()
     pygame.display.set_caption("*****Tanks*****")
-    background = pygame.image.load('./images/background.jpg')
+    background = pygame.image.load('./../images/background.jpg')
     window.blit(background, (0, 0))
     pygame.display.update()
     pygame.mixer.music.play(loops=-1, fade_ms=1)

@@ -17,11 +17,11 @@ def result_menu(object):
 
     pygame.init()
     pygame.display.set_caption("*****Tanks*****")
-    background = pygame.image.load('./images/result_background.png')
+    background = pygame.image.load('./../images/result_background.png')
     window.blit(background, (0, 0))
     pygame.display.update()
 
-    pygame.mixer.music.load("./sounds/result_menu.flac")
+    pygame.mixer.music.load("./../sounds/result_menu.flac")
     pygame.mixer.music.play(loops=-1)
 
     myFont = pygame.font.SysFont("Times New Roman", 30, bold=True)
