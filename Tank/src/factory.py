@@ -7,7 +7,7 @@ DIRECTS = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 ui = UI()
 
 PLAYER_NUMBER = [0, 1]
-BLOCK_TYPES = ['block_brick', 'block_liana']
+
 
 class Storage:
     objects = []
@@ -26,6 +26,8 @@ storage = Singleton()
 '''Тектуры для объектов'''
 imgBrick = pygame.image.load('./images/block_brick.png')
 imgLiana = pygame.image.load('./images/block_liana.png')
+imgIron = pygame.image.load('./images/block_iron.png')
+BLOCK_TYPES = ['block_brick', 'block_liana', 'block_iron']
 imgTanks = [
     pygame.image.load('./images/tank1.png'),
     pygame.image.load('./images/tank2.png'),
@@ -40,7 +42,7 @@ imgBangs = [
 Tanksounds = [
     pygame.mixer.Sound("./sounds/tank_shot.wav"),
     pygame.mixer.Sound("./sounds/explosion.wav"),
-    #pygame.mixer.Sound("./sounds/driving.wav")
+    # pygame.mixer.Sound("./sounds/driving.wav")
 ]
 
 
@@ -100,7 +102,7 @@ class Tank(Factory):
             self.direct = 2
 
         for obj in storage.objects:
-            if obj != self and (obj.type == 'block_brick' or obj.type == 'tank') and obj.rect.colliderect(self.rect):
+            if obj != self and (obj.type == BLOCK_TYPES[0] or obj.type == BLOCK_TYPES[2] or obj.type == 'tank') and obj.rect.colliderect(self.rect):
                 self.rect.topleft = oldX, oldY
 
         if keys[self.keySHOT] and self.shotTimer == 0:
@@ -140,11 +142,9 @@ class Bullet(Factory):
             storage.bullets.remove(self)
         else:
             for obj in storage.objects:
-                if obj != self.parent and obj.type != 'bang' and obj.type != 'block_liana' and obj.rect.collidepoint(self.px, self.py):
+                if obj != self.parent and obj.type != 'bang' and obj.type != 'block_liana' and obj.rect.collidepoint(
+                        self.px, self.py):
                     obj.damage(self.damage)
-                    # Storage.bullets.remove(self)
-                    # Storage.objects.remove(obj)
-                    # obj.damage(self.damage)
                     storage.bullets.remove(self)
                     Bang(self.px, self.py)
                     break
@@ -185,13 +185,19 @@ class Block(Factory):
         pass
 
     def create_objects(self):
+        if self.type == 'block_liana':
+            window.blit(imgLiana, self.rect)
+
         if self.type == 'block_brick':
             window.blit(imgBrick, self.rect)
-        elif self.type == 'block_liana':
-            window.blit(imgLiana, self.rect)
+
+        if self.type == 'block_iron':
+            window.blit(imgIron, self.rect)
 
     def damage(self, value):
         self.hp -= value
+        if self.type == BLOCK_TYPES[2]:
+            return
         if self.hp <= 0:
             storage.objects.remove(self)
 
@@ -216,7 +222,7 @@ def update_objects(keys):
 
 def make_player1_tank():
     Tank((0, 250, 0), 100, 275, 0, (pygame.K_a, pygame.K_d,
-         pygame.K_w, pygame.K_s, pygame.K_SPACE), PLAYER_NUMBER[0])
+                                    pygame.K_w, pygame.K_s, pygame.K_SPACE), PLAYER_NUMBER[0])
 
 
 def make_player2_tank():
@@ -238,7 +244,7 @@ def create_blocks(N):
             if not fined:
                 break
 
-        Block(x, y, TILE, BLOCK_TYPES[randint(0, 1)])
+        Block(x, y, TILE, BLOCK_TYPES[randint(0, 2)])
 
 
 def get_winnter():
