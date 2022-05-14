@@ -3,3 +3,5 @@ __pycache*
 Tank_spec*
 main.spec*
 .*
+venv
+
