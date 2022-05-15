@@ -3,9 +3,9 @@ import pygame
 pygame.init()
 
 BUTTON_DEFAULT_SIZE = [250, 100, 50]
-BUTTON_DEFAULT_COLOR = [(0, 220, 220), (64, 166, 48)]
+BUTTON_DEFAULT_COLOR = [(150, 150, 150), (39, 89, 46)]
 INPUT_FON_SIZE = 30
-BUTTON_TEXT_COLOR = (0, 220, 220)
+BUTTON_TEXT_COLOR = (150, 150, 150)
 
 
 class Button:
@@ -57,11 +57,9 @@ class Button:
             if mouse[1] > self.rect.topleft[1]:
                 if mouse[0] < self.rect.bottomright[0]:
                     if mouse[1] < self.rect.bottomright[1]:
-                        self.color = (100, 100, 100)
-                        self.text_color = (100, 100, 100)
-                        if pygame.mouse.get_pressed()[0]:
-                            return self.text
-                        return False
+                        self.color = BUTTON_DEFAULT_COLOR[0]
+                        self.text_color = BUTTON_DEFAULT_COLOR[0]
+                        return self.text
         self.color = (39, 89, 46)
         self.text_color = (250, 250, 250)
         return False

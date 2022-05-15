@@ -1,4 +1,7 @@
-.idea
-__pycache__
-Tank_spec
-main.spec
+.idea*
+__pycache*
+Tank_spec*
+main.spec*
+.*
+venv
+
