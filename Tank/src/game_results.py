@@ -17,8 +17,12 @@ def result_menu(object):
 
     pygame.init()
     pygame.display.set_caption("*****Tanks*****")
-    background = pygame.image.load('../images/result_background.png')
+    background = pygame.image.load('./../images/result_background.png')
     window.blit(background, (0, 0))
+    pygame.display.update()
+
+    pygame.mixer.music.load("./../sounds/result_menu.mp3")
+    pygame.mixer.music.play(loops=-1)
 
     myFont = pygame.font.SysFont("Times New Roman", 30, bold=True)
 
@@ -26,7 +30,7 @@ def result_menu(object):
     result_message = "Player " + \
         str(object.rank + 1) + " win!" + \
         long_space + "Last hp: " + str(object.hp)
-    myText = myFont.render(result_message, 1, object.color)
+    myText = myFont.render(result_message, True, object.color)
     window.blit(myText, TEXT_POSITION)
 
     window.blit(object.image, WINNER_IMG_pos)
@@ -41,12 +45,14 @@ def result_menu(object):
             if event.type == pygame.QUIT:
                 play = False
 
-        for button in buttons:
-            button.update()
-            pygame.display.update()
-            if button.pressed() == "Main menu":
-                return True
-            elif button.pressed() == "Exit":
-                return False
+            for button in buttons:
+                button.update()
+                if button.pressed() == "Main menu" and event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.mixer.music.stop()
+                    return True
+                if button.pressed() == "Exit" and event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.mixer.music.stop()
+                    return False
+                pygame.display.update()
     time.sleep(0.2)
     pygame.quit()
